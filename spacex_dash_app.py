@@ -27,7 +27,7 @@ app.layout = html.Div(children=[html.H1('SpaceX Launch Records Dashboard',
                                                'font-size': 40}),
                                 # TASK 1: Add a dropdown list to enable Launch Site selection
                                 # The default select value is for ALL sites
-                                dcc.Dropdown(id='id',
+                                dcc.Dropdown(id='site-dropdown',
                                     options=create_launch_site_list(),#[
                                         #{'label': 'All Sites', 'value': 'ALL'},
                                         #{'label': 'site1', 'value': 'site1'},
@@ -59,16 +59,25 @@ app.layout = html.Div(children=[html.H1('SpaceX Launch Records Dashboard',
 def get_pie_chart(entered_site):
     filtered_df = spacex_df
     if entered_site == 'ALL':
-        fig = px.pie(data, values='class', 
-        names='pie chart names', 
-        title='title')
-        return fig
+        fig = px.pie(filtered_df.groupby(['Launch Site'])['class'].sum().reset_index(),
+                     values='class', names='Launch Site', 
+                     title='All Successful Launches by Site')
     else:
         # return the outcomes piechart for a selected site
+        filtered_df = spacex_df[spacex_df['Launch Site'] == entered_site]
+        
+        success_count = filtered_df['class'].sum()
+        total = filtered_df['class'].count()
+        tmp_df = pd.DataFrame({'count': {'success': success_count,
+                               'failure':total-success_count}})
+
+        fig = px.pie(tmp_df,values='count',names=tmp_df.index,
+                     title='Successful Launches at {}'.format(entered_site))
+
+    return fig
 # TASK 4:
 # Add a callback function for `site-dropdown` and `payload-slider` as inputs, `success-payload-scatter-chart` as output
 
-
 # Run the app
 if __name__ == '__main__':
-    app.run_server()
+    app.run_server(debug=True)
