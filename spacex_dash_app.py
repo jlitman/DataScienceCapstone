@@ -28,7 +28,7 @@ app.layout = html.Div(children=[html.H1('SpaceX Launch Records Dashboard',
                                 # TASK 1: Add a dropdown list to enable Launch Site selection
                                 # The default select value is for ALL sites
                                 dcc.Dropdown(id='site-dropdown',
-                                    options=create_launch_site_list(),#[
+                                    options=create_launch_site_list(),
                                     value='ALL',
                                     placeholder="Select a Launch Site",
                                     searchable=True
